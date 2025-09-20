@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import { home as homeRoute } from '../routes';
+import { route } from '@/lib/route';
 import LandingLayout from '@/layouts/landing-layout';
 import {
     type FeaturedSupplier,
@@ -81,16 +83,16 @@ function HeroSlider({ slides }: { slides: HeroSlide[] }) {
         return () => window.clearInterval(interval);
     }, [slides.length]);
 
+    const exploreHref = `${homeRoute().url}#buying-requests`;
+
     return (
         <div className="relative min-h-[460px] overflow-hidden rounded-3xl border border-orange-100 bg-orange-500/40 shadow-2xl">
             {slides.map((slide, index) => (
                 <div
-                    key={slide.title}
+                    key={slide.id ?? slide.title}
                     className={cn(
                         'absolute inset-0 grid h-full grid-cols-1 items-center overflow-hidden rounded-3xl transition-all duration-700 md:grid-cols-2',
-                        index === activeIndex
-                            ? 'opacity-100'
-                            : 'pointer-events-none opacity-0',
+                        index === activeIndex ? 'opacity-100' : 'pointer-events-none opacity-0',
                     )}
                 >
                     <div
@@ -99,26 +101,24 @@ function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                             backgroundImage: `linear-gradient(140deg, rgba(244, 115, 33, 0.92) 0%, rgba(235, 68, 27, 0.75) 55%, rgba(247, 148, 29, 0.35) 100%)`,
                         }}
                     >
-                        <Badge className="w-fit bg-white/20 text-xs uppercase tracking-[0.35em] text-white">
-                            Marketplace
-                        </Badge>
-                        <h1 className="text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
-                            {slide.title}
-                        </h1>
-                        <p className="max-w-xl text-base text-white/85 sm:text-lg">
-                            {slide.description}
-                        </p>
+                        <Badge className="w-fit bg-white/20 text-xs uppercase tracking-[0.35em] text-white">Marketplace</Badge>
+                        <h1 className="text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{slide.title}</h1>
+                        {slide.description && (
+                            <p className="max-w-xl text-base text-white/85 sm:text-lg">{slide.description}</p>
+                        )}
                         <div className="flex flex-col gap-3 sm:flex-row">
-                            <Button size="lg" className="bg-white text-orange-600 hover:bg-white/90" asChild>
-                                <Link href={slide.ctaHref}>{slide.cta}</Link>
-                            </Button>
+                            {slide.cta && (
+                                <Button size="lg" className="bg-white text-orange-600 hover:bg-white/90" asChild>
+                                    <Link href={slide.ctaUrl ?? route('register')}>{slide.cta}</Link>
+                                </Button>
+                            )}
                             <Button
                                 size="lg"
                                 variant="outline"
                                 className="border-white/60 bg-transparent text-white hover:bg-white/10"
                                 asChild
                             >
-                                <Link href="/login">
+                                <Link href={exploreHref}>
                                     Discover marketplace
                                     <ArrowRight className="ml-2 size-4" />
                                 </Link>
@@ -154,9 +154,7 @@ function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                         onClick={() => setActiveIndex(index)}
                         className={cn(
                             'size-2 rounded-full transition-all',
-                            index === activeIndex
-                                ? 'w-6 bg-white'
-                                : 'bg-white/50 hover:bg-white/80',
+                            index === activeIndex ? 'w-6 bg-white' : 'bg-white/50 hover:bg-white/80',
                         )}
                     />
                 ))}
@@ -230,7 +228,7 @@ function RequestCard({ request }: { request: MarketplaceRequest }) {
             <CardFooter className="flex items-center justify-between">
                 <span className="text-xs text-neutral-400">Posted {request.createdAt ?? 'today'}</span>
                 <Button variant="ghost" className="text-orange-600 hover:bg-orange-50" asChild>
-                    <Link href="/login">
+                    <Link href={route('requests.show', { buyerRequest: request.slug })}>
                         View details
                         <ArrowRight className="ml-2 size-4" />
                     </Link>
@@ -299,7 +297,7 @@ function SupplierCard({ supplier }: { supplier: FeaturedSupplier }) {
             </CardContent>
             <CardFooter className="flex justify-end p-6 pt-0">
                 <Button variant="outline" className="border-orange-200 text-orange-600 hover:bg-orange-50" asChild>
-                    <Link href="/login">Contact supplier</Link>
+                    <Link href={supplier.url}>Contact supplier</Link>
                 </Button>
             </CardFooter>
         </Card>
@@ -324,7 +322,7 @@ function CategoryCard({ category }: { category: MarketplaceCategory }) {
             <CardFooter className="flex items-center justify-between text-xs text-neutral-500">
                 <span>{category.requestsCount} active requests</span>
                 <Button variant="ghost" className="text-orange-600 hover:bg-orange-50" asChild>
-                    <Link href="/login">Browse</Link>
+                    <Link href={route('categories.show', { category: category.slug })}>Browse</Link>
                 </Button>
             </CardFooter>
         </Card>
@@ -333,7 +331,9 @@ function CategoryCard({ category }: { category: MarketplaceCategory }) {
 
 export default function Home() {
     const { props } = usePage<PageProps>();
-    const { featuredSuppliers, latestRequests, topCategories, heroSlides, stats } = props;
+    const { featuredSuppliers, latestRequests, topCategories, heroSlides, stats, cms } = props;
+
+    const slides = heroSlides.length ? heroSlides : cms?.slides ?? [];
 
     const statsDisplay = useMemo(
         () => [
@@ -359,7 +359,7 @@ export default function Home() {
     return (
         <LandingLayout>
             <section className="relative mx-auto w-full max-w-6xl space-y-12 px-4 pb-16 pt-20">
-                <HeroSlider slides={heroSlides} />
+                <HeroSlider slides={slides} />
                 <div className="grid gap-4 rounded-2xl bg-white/70 p-6 backdrop-blur md:grid-cols-4">
                     {statsDisplay.map((item) => (
                         <StatCard key={item.label} {...item} />
@@ -376,7 +376,7 @@ export default function Home() {
                         </CardHeader>
                         <CardContent>
                             <Button className="w-full bg-orange-600 hover:bg-orange-600/90" asChild>
-                                <Link href="/register">Create free sourcing plan</Link>
+                                <Link href={route('register')}>Create free sourcing plan</Link>
                             </Button>
                         </CardContent>
                     </Card>
@@ -395,7 +395,7 @@ export default function Home() {
                         </p>
                     </div>
                     <Button variant="outline" className="border-orange-200 text-orange-600 hover:bg-orange-50" asChild>
-                        <Link href="/register">Post a buying request</Link>
+                        <Link href={route('register')}>Post a buying request</Link>
                     </Button>
                 </div>
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -495,7 +495,7 @@ export default function Home() {
                         </p>
                     </div>
                     <Button className="bg-orange-600 hover:bg-orange-600/90" asChild>
-                        <Link href="/register">Join the supplier network</Link>
+                        <Link href={route('register')}>Join the supplier network</Link>
                     </Button>
                 </div>
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -515,7 +515,7 @@ export default function Home() {
                             </h2>
                         </div>
                         <Button variant="outline" className="border-white/40 text-white hover:bg-white/10" asChild>
-                            <Link href="/register">Start sourcing today</Link>
+                            <Link href={route('register')}>Start sourcing today</Link>
                         </Button>
                     </div>
                     <div className="grid gap-6 md:grid-cols-3">
@@ -597,3 +597,6 @@ export default function Home() {
         </LandingLayout>
     );
 }
+
+
+

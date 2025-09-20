@@ -28,6 +28,9 @@ class DatabaseSeeder extends Seeder
             KeywordSeeder::class,
             SupplierSeeder::class,
             BuyerRequestSeeder::class,
+            PageSeeder::class,
+            SlideSeeder::class,
+            MediaSeeder::class,
         ]);
     }
 }

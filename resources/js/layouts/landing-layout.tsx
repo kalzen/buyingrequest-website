@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import {
     Sheet,
     SheetContent,
@@ -9,45 +9,56 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Menu, ArrowRight, Linkedin, Twitter, Youtube, Mail, Phone } from 'lucide-react';
-import { PropsWithChildren } from 'react';
-
-const navItems = [
-    { label: 'Solutions', href: '#solutions' },
-    { label: 'Buying Requests', href: '#buying-requests' },
-    { label: 'Suppliers', href: '#suppliers' },
-    { label: 'Resources', href: '#resources' },
-];
-
-function NavigationLinks({
-    className = '',
-    onClick,
-}: {
-    className?: string;
-    onClick?: () => void;
-}) {
-    return (
-        <nav className={`flex items-center gap-6 text-sm font-medium ${className}`}>
-            {navItems.map((item) => (
-                <a
-                    key={item.label}
-                    href={item.href}
-                    className="group inline-flex items-center gap-1 text-white/80 transition hover:text-white"
-                    onClick={onClick}
-                >
-                    {item.label}
-                    <ArrowRight className="size-3 translate-x-0 opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100" />
-                </a>
-            ))}
-        </nav>
-    );
-}
+import { PropsWithChildren, useMemo } from 'react';
+import { home, login, register } from '@/routes';
+import type { SharedData, CmsPageLink } from '@/types';
 
 export default function LandingLayout({ children }: PropsWithChildren) {
+    const { props } = usePage<SharedData>();
+    const cms = props.cms;
+    const homeUrl = home().url;
+
+    const navItems = useMemo(() => {
+        const firstMarketplace = cms?.footerLinks.marketplace?.[0];
+        const firstSupplier = cms?.footerLinks.suppliers?.[0];
+
+        return [
+            {
+                label: 'Solutions',
+                href: firstMarketplace?.url ?? `${homeUrl}#solutions`,
+            },
+            {
+                label: 'Buying Requests',
+                href: `${homeUrl}#buying-requests`,
+            },
+            {
+                label: 'Suppliers',
+                href: firstSupplier?.url ?? `${homeUrl}#suppliers`,
+            },
+            {
+                label: 'Resources',
+                href: `${homeUrl}#resources`,
+            },
+        ];
+    }, [cms, homeUrl]);
+
+    const renderFooterLinks = (links: CmsPageLink[]) => (
+        <ul className="mt-4 space-y-2">
+            {links.map((link) => (
+                <li key={link.id}>
+                    <Link href={link.url} className="transition hover:text-orange-600">
+                        {link.title}
+                    </Link>
+                </li>
+            ))}
+        </ul>
+    );
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-orange-500 via-orange-500/90 to-orange-50">
             <header className="sticky top-0 z-40 border-b border-white/15 bg-orange-500/95 backdrop-blur">
                 <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4">
-                    <Link href="/" className="flex items-center gap-2 text-white">
+                    <Link href={homeUrl} className="flex items-center gap-2 text-white">
                         <span className="flex size-10 items-center justify-center rounded-xl bg-white/15 text-2xl font-bold">S</span>
                         <div className="leading-tight">
                             <p className="font-semibold tracking-wide">SupplySphere</p>
@@ -56,13 +67,13 @@ export default function LandingLayout({ children }: PropsWithChildren) {
                     </Link>
 
                     <div className="hidden items-center gap-6 md:flex">
-                        <NavigationLinks />
+                        <NavigationLinks items={navItems} />
                         <div className="flex items-center gap-2">
                             <Button variant="ghost" className="text-white/80 hover:text-white" asChild>
-                                <Link href="/login">Sign in</Link>
+                                <Link href={login().url}>Sign in</Link>
                             </Button>
                             <Button className="bg-white text-orange-600 hover:bg-white/90" asChild>
-                                <Link href="/register">Join as supplier</Link>
+                                <Link href={register().url}>Join as supplier</Link>
                             </Button>
                         </div>
                     </div>
@@ -80,16 +91,16 @@ export default function LandingLayout({ children }: PropsWithChildren) {
                                 </SheetHeader>
                                 <div className="mt-6 flex flex-col gap-6">
                                     <NavigationLinks
+                                        items={navItems}
                                         className="flex-col items-start gap-3 text-base text-neutral-700"
-                                        onClick={() => undefined}
                                     />
                                     <Separator />
                                     <div className="flex flex-col gap-2">
                                         <Button variant="outline" asChild>
-                                            <Link href="/login">Sign in</Link>
+                                            <Link href={login().url}>Sign in</Link>
                                         </Button>
                                         <Button className="bg-orange-500 hover:bg-orange-500/90" asChild>
-                                            <Link href="/register">Join as supplier</Link>
+                                            <Link href={register().url}>Join as supplier</Link>
                                         </Button>
                                     </div>
                                 </div>
@@ -127,74 +138,32 @@ export default function LandingLayout({ children }: PropsWithChildren) {
                     </div>
                     <div className="text-sm text-neutral-600">
                         <p className="font-semibold text-neutral-800">Marketplace</p>
-                        <ul className="mt-4 space-y-2">
-                            <li>
-                                <a href="#buying-requests" className="transition hover:text-orange-600">
-                                    Live buying requests
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#suppliers" className="transition hover:text-orange-600">
-                                    Verified suppliers
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#solutions" className="transition hover:text-orange-600">
-                                    Solutions overview
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#resources" className="transition hover:text-orange-600">
-                                    Help center
-                                </a>
-                            </li>
-                        </ul>
+                        {renderFooterLinks(cms?.footerLinks.marketplace ?? [])}
                     </div>
                     <div className="text-sm text-neutral-600">
                         <p className="font-semibold text-neutral-800">For suppliers</p>
-                        <ul className="mt-4 space-y-2">
-                            <li>
-                                <a href="/register" className="transition hover:text-orange-600">
-                                    Become a partner
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/login" className="transition hover:text-orange-600">
-                                    Supplier sign in
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="transition hover:text-orange-600">
-                                    Advertising options
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="transition hover:text-orange-600">
-                                    Success stories
-                                </a>
-                            </li>
-                        </ul>
+                        {renderFooterLinks(cms?.footerLinks.suppliers ?? [])}
                     </div>
                     <div className="text-sm text-neutral-600">
                         <p className="font-semibold text-neutral-800">Contact</p>
                         <ul className="mt-4 space-y-3">
                             <li className="flex items-center gap-2">
                                 <Mail className="size-4 text-orange-500" />
-                                <a href="mailto:hello@supplysphere.com" className="transition hover:text-orange-600">
-                                    hello@supplysphere.com
+                                <a href={`mailto:${cms?.contact.email ?? 'hello@supplysphere.com'}`} className="transition hover:text-orange-600">
+                                    {cms?.contact.email ?? 'hello@supplysphere.com'}
                                 </a>
                             </li>
                             <li className="flex items-center gap-2">
                                 <Phone className="size-4 text-orange-500" />
-                                <a href="tel:+18880001234" className="transition hover:text-orange-600">
-                                    +1 (888) 000-1234
+                                <a href={`tel:${cms?.contact.phone ?? '+18880001234'}`} className="transition hover:text-orange-600">
+                                    {cms?.contact.phone ?? '+1 (888) 000-1234'}
                                 </a>
                             </li>
                             <li>
-                                <span>Mon - Fri, 9:00 - 18:00 (UTC+7)</span>
+                                <span>{cms?.contact.hours ?? 'Mon - Fri, 9:00 - 18:00 (UTC+7)'}</span>
                             </li>
                             <li>
-                                <span>Ho Chi Minh City &amp; Singapore</span>
+                                <span>{cms?.contact.locations?.join(' • ') ?? 'Ho Chi Minh City & Singapore'}</span>
                             </li>
                         </ul>
                     </div>
@@ -204,5 +173,28 @@ export default function LandingLayout({ children }: PropsWithChildren) {
                 </div>
             </footer>
         </div>
+    );
+}
+
+function NavigationLinks({
+    items,
+    className = '',
+}: {
+    items: Array<{ label: string; href: string }>;
+    className?: string;
+}) {
+    return (
+        <nav className={`flex items-center gap-6 text-sm font-medium ${className}`}>
+            {items.map((item) => (
+                <Link
+                    key={item.label}
+                    href={item.href}
+                    className="group inline-flex items-center gap-1 text-white/80 transition hover:text-white"
+                >
+                    {item.label}
+                    <ArrowRight className="size-3 translate-x-0 opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100" />
+                </Link>
+            ))}
+        </nav>
     );
 }

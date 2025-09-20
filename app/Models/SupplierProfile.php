@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
 
 class SupplierProfile extends Model
 {
@@ -18,6 +19,7 @@ class SupplierProfile extends Model
     protected $fillable = [
         'user_id',
         'company_name',
+        'slug',
         'headline',
         'about',
         'website_url',
@@ -49,6 +51,29 @@ class SupplierProfile extends Model
         'is_featured' => 'boolean',
         'rating' => 'float',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $profile): void {
+            if (empty($profile->slug)) {
+                $base = Str::slug($profile->company_name);
+                $slug = $base;
+                $suffix = 1;
+
+                while (self::where('slug', $slug)->whereKeyNot($profile->id)->exists()) {
+                    $slug = $base.'-'.Str::random(4 + $suffix);
+                    $suffix++;
+                }
+
+                $profile->slug = $slug;
+            }
+        });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     /**
      * @return BelongsTo<User, SupplierProfile>

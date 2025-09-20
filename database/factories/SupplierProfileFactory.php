@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\SupplierProfile;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<SupplierProfile>
@@ -18,9 +19,12 @@ class SupplierProfileFactory extends Factory
      */
     public function definition(): array
     {
+        $company = fake()->company();
+
         return [
             'user_id' => User::factory()->state(['role' => User::ROLE_SUPPLIER]),
-            'company_name' => fake()->company(),
+            'company_name' => $company,
+            'slug' => Str::slug($company).'-'.Str::random(4),
             'headline' => fake()->sentence(6),
             'about' => fake()->paragraph(),
             'website_url' => fake()->url(),

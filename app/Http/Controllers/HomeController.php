@@ -4,15 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\BuyerRequest;
 use App\Models\Category;
+use App\Models\Slide;
 use App\Models\SupplierProfile;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class HomeController extends Controller
 {
-    /**
-     * Display the marketplace landing page.
-     */
     public function __invoke(): Response
     {
         $featuredSuppliers = SupplierProfile::with(['user', 'categories'])
@@ -34,6 +32,7 @@ class HomeController extends Controller
                     'name' => $category->name,
                     'slug' => $category->slug,
                 ])->all(),
+                'url' => route('suppliers.show', $profile->slug),
             ])->all();
 
         $latestRequests = BuyerRequest::with(['category'])
@@ -43,6 +42,7 @@ class HomeController extends Controller
             ->get()
             ->map(fn (BuyerRequest $request) => [
                 'id' => $request->id,
+                'slug' => $request->slug,
                 'title' => $request->title,
                 'summary' => $request->summary,
                 'category' => $request->category?->name,
@@ -70,29 +70,14 @@ class HomeController extends Controller
                 'requestsCount' => $category->buyer_requests_count,
             ])->all();
 
-        $heroSlides = [
-            [
-                'title' => 'Source smarter. Grow faster.',
-                'description' => 'Connect with verified suppliers worldwide and get tailored quotes within hours.',
-                'image' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1800&q=80',
-                'cta' => 'Start sourcing',
-                'ctaHref' => '/register',
-            ],
-            [
-                'title' => 'Power your supply chain with confidence',
-                'description' => 'Transparent supplier profiles, trustworthy data, and responsive support for every deal.',
-                'image' => 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1800&q=80',
-                'cta' => 'Explore suppliers',
-                'ctaHref' => '/login',
-            ],
-            [
-                'title' => 'Post buying requests in minutes',
-                'description' => 'Publish needs, collect offers, and negotiate all in one place with curated experts.',
-                'image' => 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1800&q=80',
-                'cta' => 'Post a request',
-                'ctaHref' => '/register',
-            ],
-        ];
+        $slides = Slide::active()->get()->map(fn (Slide $slide) => [
+            'id' => $slide->id,
+            'title' => $slide->title,
+            'description' => $slide->subtitle,
+            'cta' => $slide->cta_label,
+            'ctaRoute' => $slide->cta_route ?? 'home',
+            'image' => $slide->image_url,
+        ])->all();
 
         $stats = [
             'verifiedSuppliers' => SupplierProfile::where('is_verified', true)->count(),
@@ -104,8 +89,12 @@ class HomeController extends Controller
             'featuredSuppliers' => $featuredSuppliers,
             'latestRequests' => $latestRequests,
             'topCategories' => $topCategories,
-            'heroSlides' => $heroSlides,
+            'heroSlides' => $slides,
             'stats' => $stats,
         ]);
     }
 }
+
+
+
+

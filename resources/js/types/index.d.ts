@@ -1,5 +1,10 @@
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
+import { route as ziggyRoute } from 'ziggy-js';
+
+declare global {
+    function route(name: string, params?: any, absolute?: boolean): string;
+}
 
 export interface Auth {
     user: User;
@@ -22,11 +27,46 @@ export interface NavItem {
     isActive?: boolean;
 }
 
+export interface CmsPageLink {
+    id: number;
+    slug: string;
+    title: string;
+    slug: string;
+    url: string;
+    routeName: string;
+    routeParams: Record<string, unknown>;
+}
+
+export interface CmsSlideLink {
+    id: number;
+    title: string;
+    description?: string | null;
+    cta?: string | null;
+    ctaRoute?: string | null;
+    ctaUrl?: string | null;
+    image: string;
+}
+
+export interface SharedCms {
+    slides: CmsSlideLink[];
+    footerLinks: {
+        marketplace: CmsPageLink[];
+        suppliers: CmsPageLink[];
+    };
+    contact: {
+        email: string;
+        phone: string;
+        hours: string;
+        locations: string[];
+    };
+}
+
 export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
     sidebarOpen: boolean;
+    cms?: SharedCms;
     [key: string]: unknown;
 }
 
@@ -67,10 +107,12 @@ export interface FeaturedSupplier {
     isVerified: boolean;
     countriesServed: string[];
     categories: FeaturedSupplierCategory[];
+    url: string;
 }
 
 export interface MarketplaceRequest {
     id: number;
+    slug: string;
     title: string;
     summary?: string | null;
     category?: string | null;
@@ -83,14 +125,19 @@ export interface MarketplaceRequest {
     leadValidUntil?: string | null;
     createdAt?: string | null;
     status: string;
+    buyer?: {
+        name: string;
+    };
 }
 
 export interface HeroSlide {
+    id: number;
     title: string;
-    description: string;
+    description?: string | null;
+    cta?: string | null;
+    ctaRoute?: string | null;
+    ctaUrl?: string | null;
     image: string;
-    cta: string;
-    ctaHref: string;
 }
 
 export interface MarketplaceStats {
@@ -98,3 +145,8 @@ export interface MarketplaceStats {
     activeBuyRequests: number;
     countriesCovered: number;
 }
+
+
+
+
+
