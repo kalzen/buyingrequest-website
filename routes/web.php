@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\Admin\BuyerRequestController as AdminBuyerRequestController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -6,11 +6,16 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\SlideController as AdminSlideController;
 use App\Http\Controllers\Admin\SupplierController as AdminSupplierController;
+use App\Http\Controllers\Buyer\DashboardController as BuyerDashboardController;
+use App\Http\Controllers\Buyer\ProfileController as BuyerProfileController;
+use App\Http\Controllers\Buyer\ListsController as BuyerListsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Marketplace\BuyerRequestController;
 use App\Http\Controllers\Marketplace\SupplierController;
 use App\Http\Controllers\Marketplace\CategoryController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\Supplier\DashboardController as SupplierDashboardController;
+use App\Http\Controllers\Supplier\ProfileController as SupplierProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -24,12 +29,44 @@ Route::get('suppliers/{supplierProfile:slug}', [SupplierController::class, 'show
 
 Route::get('requests/{buyerRequest:slug}', [BuyerRequestController::class, 'show'])->name('requests.show');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
+    // Redirect to appropriate dashboard based on role
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        $user = auth()->user();
+        $role = $user->role ?? 'buyer';
+        
+        return match($role) {
+            'admin' => redirect()->route('admin.dashboard'),
+            'supplier' => redirect()->route('supplier.dashboard'),
+            default => redirect()->route('buyer.dashboard')
+        };
     })->name('dashboard');
 
-    Route::middleware('can:access-admin')->prefix('admin')->name('admin.')->group(function () {
+    // Buyer routes
+    Route::middleware('role:buyer')->prefix('buyer')->name('buyer.')->group(function () {
+        Route::get('dashboard', [BuyerDashboardController::class, 'index'])->name('dashboard');
+        Route::get('profile', [BuyerProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [BuyerProfileController::class, 'update'])->name('profile.update');
+        
+        // Request routes
+        Route::get('requests/create', [BuyerRequestController::class, 'create'])->name('requests.create');
+        Route::post('requests', [BuyerRequestController::class, 'store'])->name('requests.store');
+        
+        // Lists routes
+        Route::get('active-requests', [BuyerListsController::class, 'activeRequests'])->name('active-requests');
+        Route::get('supplier-contacts', [BuyerListsController::class, 'supplierContacts'])->name('supplier-contacts');
+        Route::get('completed-orders', [BuyerListsController::class, 'completedOrders'])->name('completed-orders');
+    });
+
+    // Supplier routes
+    Route::middleware('role:supplier')->prefix('supplier')->name('supplier.')->group(function () {
+        Route::get('dashboard', [SupplierDashboardController::class, 'index'])->name('dashboard');
+        Route::get('profile', [SupplierProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [SupplierProfileController::class, 'update'])->name('profile.update');
+    });
+
+    // Admin routes
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
 
         Route::resource('pages', AdminPageController::class)->only(['index', 'store', 'update', 'destroy']);

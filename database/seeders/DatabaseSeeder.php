@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
             KeywordSeeder::class,
             SupplierSeeder::class,
             BuyerRequestSeeder::class,
+            SupplierContactSeeder::class,
+            OrderSeeder::class,
             PageSeeder::class,
             SlideSeeder::class,
             MediaSeeder::class,

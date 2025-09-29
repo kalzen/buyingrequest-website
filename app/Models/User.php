@@ -69,6 +69,38 @@ class User extends Authenticatable
         return $this->hasMany(BuyerRequest::class);
     }
 
+    /**
+     * @return HasMany<SupplierContact>
+     */
+    public function supplierContacts(): HasMany
+    {
+        return $this->hasMany(SupplierContact::class, 'buyer_id');
+    }
+
+    /**
+     * @return HasMany<SupplierContact>
+     */
+    public function buyerContacts(): HasMany
+    {
+        return $this->hasMany(SupplierContact::class, 'supplier_id');
+    }
+
+    /**
+     * @return HasMany<Order>
+     */
+    public function ordersAsBuyer(): HasMany
+    {
+        return $this->hasMany(Order::class, 'buyer_id');
+    }
+
+    /**
+     * @return HasMany<Order>
+     */
+    public function ordersAsSupplier(): HasMany
+    {
+        return $this->hasMany(Order::class, 'supplier_id');
+    }
+
     public function isSupplier(): bool
     {
         return $this->role === self::ROLE_SUPPLIER;

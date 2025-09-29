@@ -25,6 +25,14 @@ class BuyerRequest extends Model
         'description',
         'quantity',
         'unit',
+        'hs_code',
+        'quality_requirements',
+        'packaging_specification',
+        'terms_of_delivery',
+        'port_of_discharge',
+        'delivery_time',
+        'method_of_transport',
+        'payment_terms',
         'budget_min',
         'budget_max',
         'currency',
@@ -33,6 +41,7 @@ class BuyerRequest extends Model
         'lead_valid_until',
         'status',
         'attachments',
+        'notes',
         'views',
     ];
 

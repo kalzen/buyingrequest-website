@@ -1,10 +1,10 @@
-import LandingLayout from '@/layouts/landing-layout';
+﻿import LandingLayout from '@/layouts/landing-layout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { register } from '@/routes';
+import { route } from '@/lib/route';
 import { Globe2, BadgeCheck } from 'lucide-react';
 
 interface SupplierPageProps {
@@ -86,12 +86,12 @@ export default function SupplierShow() {
                     </div>
                     <div className="flex flex-col gap-3">
                         <Button className="bg-orange-600 hover:bg-orange-600/90" asChild>
-                            <a href={supplier.websiteUrl ?? register().url} target="_blank" rel="noreferrer">
+                            <a href={supplier.websiteUrl ?? route('register')} target="_blank" rel="noreferrer">
                                 Visit supplier
                             </a>
                         </Button>
                         <Button variant="outline" className="border-orange-200 text-orange-600 hover:bg-orange-50" asChild>
-                            <Link href={register().url}>Contact supplier</Link>
+                            <Link href={route('register')}>Contact supplier</Link>
                         </Button>
                     </div>
                 </div>
@@ -111,7 +111,7 @@ export default function SupplierShow() {
                             )}
                             <Separator />
                             <div className="grid gap-3 text-sm md:grid-cols-2">
-                                <Detail label="Founded" value={supplier.foundedYear ? supplier.foundedYear.toString() : '�'} />
+                                <Detail label="Founded" value={supplier.foundedYear ? supplier.foundedYear.toString() : ''} />
                                 <Detail
                                     label="Minimum order"
                                     value={supplier.minOrderQuantity ? `${supplier.minOrderQuantity} units` : 'Negotiable'}
@@ -170,7 +170,7 @@ export default function SupplierShow() {
                                 Upgrade to featured supplier status to appear on the homepage, respond instantly, and unlock insights.
                             </p>
                             <Button className="w-full bg-orange-600 hover:bg-orange-600/90" asChild>
-                                <Link href={register().url}>Boost visibility</Link>
+                                <Link href={route('register')}>Boost visibility</Link>
                             </Button>
                         </CardContent>
                     </Card>
@@ -223,3 +223,4 @@ function Detail({ label, value }: { label: string; value: string }) {
         </div>
     );
 }
+

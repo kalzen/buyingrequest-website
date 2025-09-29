@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
-import { store } from '@/routes/password/confirm';
+import { route } from 'ziggy-js';
 import { Form, Head } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 
@@ -15,7 +15,7 @@ export default function ConfirmPassword() {
         >
             <Head title="Confirm password" />
 
-            <Form {...store.form()} resetOnSuccess={['password']}>
+            <Form action={route('password.confirm')} method="post" resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
                     <div className="space-y-6">
                         <div className="grid gap-2">
