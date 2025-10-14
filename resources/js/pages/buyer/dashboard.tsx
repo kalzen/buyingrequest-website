@@ -43,10 +43,10 @@ export default function BuyerDashboard() {
                     <div className="mx-auto flex h-18 w-full max-w-7xl items-center justify-between gap-6 px-4 py-4">
                         <Link href={route('home')} className="flex items-center gap-3 text-primary">
                             <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-primary-foreground">
-                                II
+                                EG
                             </span>
                             <div className="leading-tight">
-                                <p className="text-lg font-semibold text-foreground">INDUSTRIAL HUB</p>
+                                <p className="text-lg font-semibold text-foreground">EXPORT GO</p>
                                 <p className="text-xs font-medium uppercase tracking-[0.3em] text-primary/70">
                                     Connect. Source. Grow.
                                 </p>
@@ -227,13 +227,13 @@ export default function BuyerDashboard() {
                     <div className="mx-auto w-full max-w-7xl px-4 py-8">
                         <div className="flex items-center justify-center space-x-8">
                             <Link 
-                                href={route('home')} 
+                                href={route('about')} 
                                 className="text-sm font-medium text-slate-600 transition hover:text-primary"
                             >
                                 About Us
                             </Link>
                             <Link 
-                                href={route('home')} 
+                                href={route('pricing')} 
                                 className="text-sm font-medium text-slate-600 transition hover:text-primary"
                             >
                                 Pricing

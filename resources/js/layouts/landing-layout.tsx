@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Menu, ArrowRight, Linkedin, Twitter, Youtube, Mail, Phone } from 'lucide-react';
+import { Menu, ArrowRight, Linkedin, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 import { PropsWithChildren, useMemo } from 'react';
 import { home, login, register } from '@/routes';
 import type { SharedData, CmsPageLink } from '@/types';
@@ -65,10 +65,10 @@ export default function LandingLayout({ children }: PropsWithChildren) {
                 <div className="mx-auto flex h-18 w-full max-w-7xl items-center justify-between gap-6 px-4 py-4">
                     <Link href={homeUrl} className="flex items-center gap-3 text-primary">
                         <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-primary-foreground">
-                            II
+                            EG
                         </span>
                         <div className="leading-tight">
-                            <p className="text-lg font-semibold text-foreground">INDUSTRIAL HUB</p>
+                            <p className="text-lg font-semibold text-foreground">EXPORT GO</p>
                             <p className="text-xs font-medium uppercase tracking-[0.3em] text-primary/70">
                                 Connect. Source. Grow.
                             </p>
@@ -105,7 +105,7 @@ export default function LandingLayout({ children }: PropsWithChildren) {
                         </SheetTrigger>
                         <SheetContent side="right" className="w-72 border-l border-[#d6e0f5] bg-white">
                             <SheetHeader>
-                                <SheetTitle className="text-primary">INDUSTRIAL HUB</SheetTitle>
+                                <SheetTitle className="text-primary">EXPORT GO</SheetTitle>
                             </SheetHeader>
                             <div className="mt-6 flex flex-col gap-5">
                                 {navigation.map((item) => (
@@ -136,8 +136,8 @@ export default function LandingLayout({ children }: PropsWithChildren) {
                 <div className="mx-auto grid w-full max-w-7xl gap-12 px-4 py-12 lg:grid-cols-[1.5fr,1fr,1fr,1fr]">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3 text-primary">
-                            <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-primary-foreground">II</span>
-                            <div className="font-semibold text-foreground">INDUSTRIAL HUB</div>
+                            <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-primary-foreground">EG</span>
+                            <div className="font-semibold text-foreground">EXPORT GO</div>
                         </div>
                         <p className="text-sm text-slate-600">
                             We connect global buyers with trusted industrial suppliers to accelerate sourcing, innovation, and growth.
@@ -174,25 +174,33 @@ export default function LandingLayout({ children }: PropsWithChildren) {
                     <div className="text-sm text-slate-600">
                         <h4 className="text-sm font-semibold text-foreground">Contact</h4>
                         <ul className="mt-4 space-y-3">
+                            <li className="flex items-start gap-2">
+                                <MapPin className="size-4 text-primary mt-1" />
+                                <div>
+                                    <p className="font-semibold text-foreground">Official U.S. Headquarters</p>
+                                    <p>Export Go</p>
+                                    <p>1550 Wewatta St</p>
+                                    <p>Denver, CO 80202</p>
+                                    <p>United States</p>
+                                </div>
+                            </li>
+                            <li className="flex items-center gap-2 mt-4">
+                                <Phone className="size-4 text-primary" />
+                                <a href="tel:+12023739263" className="transition hover:text-primary">
+                                    +1 (202) 373-9263
+                                </a>
+                            </li>
                             <li className="flex items-center gap-2">
                                 <Mail className="size-4 text-primary" />
-                                <a href={`mailto:${cms?.contact.email ?? 'hello@industrialhub.com'}`} className="transition hover:text-primary">
-                                    {cms?.contact.email ?? 'hello@industrialhub.com'}
+                                <a href="https://exportgo.net" target="_blank" rel="noopener noreferrer" className="transition hover:text-primary">
+                                    Exportgo.net
                                 </a>
                             </li>
-                            <li className="flex items-center gap-2">
-                                <Phone className="size-4 text-primary" />
-                                <a href={`tel:${cms?.contact.phone ?? '+18880001234'}`} className="transition hover:text-primary">
-                                    {cms?.contact.phone ?? '+1 (888) 000-1234'}
-                                </a>
-                            </li>
-                            <li>{cms?.contact.hours ?? 'Mon - Fri · 9:00 - 18:00 (UTC+7)'}</li>
-                            <li>{cms?.contact.locations?.join(', ') ?? 'Singapore · Ho Chi Minh City'}</li>
                         </ul>
                     </div>
                 </div>
                 <div className="border-t border-[#d6e0f5] bg-[#eef2fb] py-4 text-center text-xs text-slate-500">
-                    © {new Date().getFullYear()} Industrial Hub. All rights reserved.
+                    © {new Date().getFullYear()} Export Go. All rights reserved. | 1550 Wewatta St, Denver, CO 80202, United States
                 </div>
             </footer>
         </div>

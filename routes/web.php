@@ -20,6 +20,12 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('/about', function () {
+    return \Inertia\Inertia::render('about');
+})->name('about');
+Route::get('/pricing', function () {
+    return \Inertia\Inertia::render('pricing');
+})->name('pricing');
 
 Route::get('pages/{page:slug}', [PageController::class, 'show'])->name('pages.show');
 
