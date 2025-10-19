@@ -12,16 +12,27 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
         
-        // Get supplier statistics
-        $profileViews = rand(500, 2000); // Mock data for now
+        // Get supplier statistics with real data
+        $profileViews = $user->getProfileViewsCount('30 days'); // Real data from profile_views table
         $activeRfqs = \App\Models\BuyerRequest::where('status', 'open')->count();
-        $responseRate = rand(80, 95); // Mock data for now
-        $completedOrders = $user->ordersAsSupplier()->where('status', 'completed')->count();
         
-        // Get recent RFQ opportunities
+        // Calculate real response rate
+        $totalRfqs = \App\Models\BuyerRequest::count();
+        $myResponses = \App\Models\SupplierResponse::where('supplier_id', $user->id)->count();
+        $responseRate = $totalRfqs > 0 ? round(($myResponses / $totalRfqs) * 100) : 0;
+        
+        $completedOrders = \App\Models\Order::where('supplier_id', $user->id)
+            ->where('status', 'completed')
+            ->count();
+        
+        // Get recent RFQ opportunities (not yet responded to)
+        $respondedRequestIds = \App\Models\SupplierResponse::where('supplier_id', $user->id)
+            ->pluck('buyer_request_id');
+            
         $recentRfqs = \App\Models\BuyerRequest::where('status', 'open')
+            ->whereNotIn('id', $respondedRequestIds)
             ->latest()
-            ->take(3)
+            ->take(5)
             ->get()
             ->map(function ($request) {
                 return [
@@ -37,14 +48,21 @@ class DashboardController extends Controller
                 ];
             });
 
+        // Get current subscription
+        $currentSubscription = $user->activeSubscription();
+
         return Inertia::render('supplier/dashboard', [
             'stats' => [
                 'profileViews' => $profileViews,
                 'activeRfqs' => $activeRfqs,
-                'responseRate' => $responseRate,
+                'responseRate' => (int) $responseRate,
                 'completedOrders' => $completedOrders,
             ],
             'recentRfqs' => $recentRfqs,
+            'currentPlan' => $currentSubscription ? [
+                'plan' => $currentSubscription->plan,
+                'status' => $currentSubscription->status,
+            ] : ['plan' => 'free', 'status' => 'active'],
         ]);
     }
 }

@@ -1,3 +1,4 @@
+import DashboardLayout from "@/layouts/dashboard-layout"
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -5,8 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { route } from 'ziggy-js';
-import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, Save, User, Mail, Phone, MapPin, Building } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { ArrowLeft, Save, User, Building } from 'lucide-react';
 import { usePage } from '@inertiajs/react';
 
 interface User {
@@ -24,59 +25,24 @@ export default function BuyerProfile() {
     const { auth } = usePage<PageProps>().props;
 
     return (
-        <>
-            <Head title="Buyer Profile" />
-            
-            <div className="min-h-screen bg-[#f5f7fb]">
-                {/* Header */}
-                <header className="border-b border-[#d6e0f5] bg-white/90 backdrop-blur">
-                    <div className="mx-auto flex h-18 w-full max-w-7xl items-center justify-between gap-6 px-4 py-4">
-                        <Link href={route('home')} className="flex items-center gap-3 text-primary">
-                            <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-primary-foreground">
-                                EG
-                            </span>
-                            <div className="leading-tight">
-                                <p className="text-lg font-semibold text-foreground">EXPORT GO</p>
-                                <p className="text-xs font-medium uppercase tracking-[0.3em] text-primary/70">
-                                    Connect. Source. Grow.
-                                </p>
-                            </div>
-                        </Link>
+        <DashboardLayout role="buyer" title="Profile Settings" pageTitle="Buyer Profile">
+            {/* Header */}
+            <div className="mb-8 px-4 lg:px-6">
+                <Link href={route('buyer.dashboard')} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-4">
+                    <ArrowLeft className="size-4" />
+                    Back to Dashboard
+                </Link>
+                <h1 className="text-3xl font-bold text-foreground mb-2">
+                    Profile Settings
+                </h1>
+                <p className="text-muted-foreground">
+                    Manage your buyer profile and account information.
+                </p>
+            </div>
 
-                        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-                            <Link 
-                                href={route('buyer.dashboard')} 
-                                className="group inline-flex items-center gap-1 rounded-full px-3 py-2 text-slate-600 transition hover:bg-primary/10 hover:text-primary"
-                            >
-                                Back to Dashboard
-                            </Link>
-                        </nav>
-
-                        <div className="text-sm text-slate-600 font-medium">
-                            Hi, {auth.user.name}
-                        </div>
-                    </div>
-                </header>
-
-                {/* Main Content */}
-                <main className="bg-gradient-to-b from-white via-[#f0f4ff] to-[#f5f7fb]">
-                    <div className="mx-auto w-full max-w-4xl px-4 py-12">
-                        {/* Header */}
-                        <div className="mb-8">
-                            <Link href={route('buyer.dashboard')} className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-primary mb-4">
-                                <ArrowLeft className="size-4" />
-                                Back to Dashboard
-                            </Link>
-                            <h1 className="text-3xl font-bold text-foreground mb-2">
-                                Profile Settings
-                            </h1>
-                            <p className="text-slate-600">
-                                Manage your buyer profile and account information.
-                            </p>
-                        </div>
-
-                        {/* Profile Form */}
-                        <Card className="shadow-lg">
+            {/* Profile Form */}
+            <div className="px-4 lg:px-6 max-w-4xl">
+                <Card className="shadow-lg">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <User className="size-5 text-primary" />
@@ -277,35 +243,7 @@ export default function BuyerProfile() {
                                 </form>
                             </CardContent>
                         </Card>
-                    </div>
-                </main>
-
-                {/* Footer */}
-                <footer className="border-t border-[#d6e0f5] bg-white">
-                    <div className="mx-auto w-full max-w-7xl px-4 py-8">
-                        <div className="flex items-center justify-center space-x-8">
-                            <Link 
-                                href={route('about')} 
-                                className="text-sm font-medium text-slate-600 transition hover:text-primary"
-                            >
-                                About Us
-                            </Link>
-                            <Link 
-                                href={route('pricing')} 
-                                className="text-sm font-medium text-slate-600 transition hover:text-primary"
-                            >
-                                Pricing
-                            </Link>
-                            <Link 
-                                href={route('home')} 
-                                className="text-sm font-medium text-slate-600 transition hover:text-primary"
-                            >
-                                Contact
-                            </Link>
-                        </div>
-                    </div>
-                </footer>
             </div>
-        </>
+        </DashboardLayout>
     );
 }

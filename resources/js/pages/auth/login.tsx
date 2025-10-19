@@ -31,12 +31,14 @@ const ACCOUNT_TABS = [
 ];
 
 export default function Login({ status, canResetPassword }: LoginProps) {
-    const [accountType, setAccountType] = useState<'buyer' | 'supplier'>('buyer');
+    // Get account type from URL query parameter
+    const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const typeFromUrl = urlParams?.get('type') as 'buyer' | 'supplier' | null;
+    const [accountType, setAccountType] = useState<'buyer' | 'supplier'>(typeFromUrl || 'buyer');
 
     return (
         <AuthLayout
             title="Welcome back"
-            description="Log in to continue managing your sourcing pipeline."
         >
             <Head title="Log in" />
 
@@ -48,6 +50,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         </TabsTrigger>
                     ))}
                 </TabsList>
+                
                 {ACCOUNT_TABS.map((tab) => (
                     <TabsContent key={tab.value} value={tab.value} className="mt-6">
                         <p className="text-sm text-slate-600">{tab.subtitle}</p>

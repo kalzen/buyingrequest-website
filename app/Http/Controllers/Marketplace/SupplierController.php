@@ -48,6 +48,15 @@ class SupplierController extends Controller
     {
         $supplierProfile->load(['user:id,name,email', 'categories:id,name', 'keywords:id,name']);
 
+        // Record profile view
+        \App\Models\ProfileView::recordView(
+            supplierId: $supplierProfile->user_id,
+            viewerId: auth()->id(),
+            ip: request()->ip(),
+            userAgent: request()->userAgent(),
+            referrer: request()->header('referer')
+        );
+
         return Inertia::render('suppliers/show', [
             'supplier' => [
                 'id' => $supplierProfile->id,

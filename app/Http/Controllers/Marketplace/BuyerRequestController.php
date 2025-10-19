@@ -99,4 +99,66 @@ class BuyerRequestController extends Controller
             ],
         ]);
     }
+
+    public function edit(BuyerRequest $buyerRequest): Response
+    {
+        // Check if the request belongs to the authenticated buyer
+        if ($buyerRequest->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this request.');
+        }
+
+        return Inertia::render('requests/edit', [
+            'request' => $buyerRequest,
+        ]);
+    }
+
+    public function update(Request $request, BuyerRequest $buyerRequest)
+    {
+        // Check authorization
+        if ($buyerRequest->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this request.');
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'summary' => 'required|string|max:1000',
+            'description' => 'nullable|string|max:5000',
+            'quantity' => 'nullable|integer|min:1',
+            'unit' => 'nullable|string|max:100',
+            'hs_code' => 'nullable|string|max:50',
+            'quality_requirements' => 'nullable|string|max:1000',
+            'packaging_specification' => 'nullable|string|max:1000',
+            'terms_of_delivery' => 'nullable|string|max:100',
+            'port_of_discharge' => 'nullable|string|max:255',
+            'delivery_time' => 'nullable|string|max:255',
+            'method_of_transport' => 'nullable|string|max:255',
+            'payment_terms' => 'nullable|string|max:255',
+            'budget_min' => 'nullable|numeric|min:0',
+            'budget_max' => 'nullable|numeric|min:0',
+            'currency' => 'required|string|max:3',
+            'preferred_location' => 'nullable|string|max:255',
+            'lead_valid_until' => 'nullable|date|after:today',
+            'shipping_terms' => 'nullable|string|max:1000',
+            'notes' => 'nullable|string|max:2000',
+        ]);
+
+        $buyerRequest->update($validated);
+
+        return redirect()->route('requests.show', $buyerRequest)
+            ->with('success', 'Request updated successfully!');
+    }
+
+    public function destroy(BuyerRequest $buyerRequest)
+    {
+        // Check authorization
+        if ($buyerRequest->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this request.');
+        }
+
+        // Mark as closed instead of deleting
+        $buyerRequest->update(['status' => 'closed']);
+
+        return redirect()->route('buyer.active-requests')
+            ->with('success', 'Request closed successfully!');
+    }
 }

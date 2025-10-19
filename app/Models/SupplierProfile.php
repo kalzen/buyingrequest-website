@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class SupplierProfile extends Model
@@ -97,6 +98,32 @@ class SupplierProfile extends Model
     public function keywords(): BelongsToMany
     {
         return $this->belongsToMany(Keyword::class)->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<ProfileView>
+     */
+    public function profileViews(): HasMany
+    {
+        return $this->hasMany(ProfileView::class, 'supplier_id', 'user_id');
+    }
+
+    /**
+     * Get total profile views count
+     */
+    public function getTotalViewsAttribute(): int
+    {
+        return $this->profileViews()->count();
+    }
+
+    /**
+     * Get views for a specific period
+     */
+    public function getViewsForPeriod(string $period = '30 days'): int
+    {
+        return $this->profileViews()
+            ->where('viewed_at', '>=', now()->sub($period))
+            ->count();
     }
 
     /**

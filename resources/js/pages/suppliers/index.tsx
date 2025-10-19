@@ -64,7 +64,7 @@ export default function SuppliersIndex() {
             <section className="relative w-full border-b border-orange-100 bg-orange-50/70 py-16">
                 <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 lg:flex-row lg:items-center">
                     <div className="flex-1 space-y-4">
-                        <Badge className="bg-orange-500/10 text-orange-600" variant="secondary">
+                        <Badge className="bg-primary/10 text-primary" variant="secondary">
                             Connect with trusted partners
                         </Badge>
                         <h1 className="text-4xl font-semibold text-neutral-900">
@@ -76,25 +76,25 @@ export default function SuppliersIndex() {
                             in minutes.
                         </p>
                         <div className="flex flex-wrap gap-3">
-                            <Button className="bg-orange-600 hover:bg-orange-600/90" size="lg" asChild>
+                            <Button className="bg-primary hover:bg-primary/90" size="lg" asChild>
                                 <Link href={register().url}>Join as supplier</Link>
                             </Button>
-                            <Button variant="outline" className="border-orange-200 text-orange-600 hover:bg-orange-50" size="lg" asChild>
+                            <Button variant="outline" className="border-primary/20 text-primary hover:bg-primary/5" size="lg" asChild>
                                 <Link href="#directory">Browse directory</Link>
                             </Button>
                         </div>
                     </div>
-                    <div className="flex flex-1 flex-col gap-4 rounded-2xl border border-orange-200 bg-white/80 p-6 shadow-sm">
-                        <div className="flex items-center gap-3 text-orange-600">
+                    <div className="flex flex-1 flex-col gap-4 rounded-2xl border border-primary/20 bg-white/80 p-6 shadow-sm">
+                        <div className="flex items-center gap-3 text-primary">
                             <Building2 className="size-6" />
                             <span className="text-sm font-medium uppercase tracking-wide">Marketplace snapshot</span>
                         </div>
-                        <Separator className="bg-orange-100" />
+                        <Separator className="bg-primary/10" />
                         <ul className="space-y-4">
                             {stats.map((stat) => (
                                 <li key={stat.label} className="space-y-1">
                                     <p className="text-sm font-semibold text-neutral-900">{stat.label}</p>
-                                    <p className="text-2xl font-semibold text-orange-600">{stat.value}</p>
+                                    <p className="text-2xl font-semibold text-primary">{stat.value}</p>
                                     <p className="text-sm text-neutral-500">{stat.description}</p>
                                 </li>
                             ))}
@@ -112,7 +112,7 @@ export default function SuppliersIndex() {
                             Reach out with confidence knowing our team monitors performance across the network.
                         </p>
                     </div>
-                    <Button variant="ghost" className="text-orange-600 hover:bg-orange-50" asChild>
+                    <Button variant="ghost" className="text-primary hover:bg-primary/5" asChild>
                         <Link href={register().url} className="inline-flex items-center gap-2">
                             Become a supplier
                             <ArrowRight className="size-4" />
@@ -127,12 +127,12 @@ export default function SuppliersIndex() {
                         ))}
                     </div>
                 ) : (
-                    <div className="mt-12 rounded-2xl border border-orange-100 bg-orange-50/60 p-10 text-center text-neutral-600">
+                    <div className="mt-12 rounded-2xl border border-primary/20 bg-primary/5 p-10 text-center text-neutral-600">
                         <h3 className="text-xl font-semibold text-neutral-900">No suppliers are featured yet</h3>
                         <p className="mt-2">
                             Check back soon or create a supplier profile to be among the first showcased in the marketplace.
                         </p>
-                        <Button className="mt-6 bg-orange-600 hover:bg-orange-600/90" asChild>
+                        <Button className="mt-6 bg-primary hover:bg-primary/90" asChild>
                             <Link href={register().url}>Create your supplier profile</Link>
                         </Button>
                     </div>
@@ -144,7 +144,7 @@ export default function SuppliersIndex() {
 
 function SupplierCard({ supplier }: { supplier: SupplierListItem }) {
     return (
-        <Card className="group h-full overflow-hidden border-neutral-200/70 transition hover:-translate-y-1 hover:border-orange-200 hover:shadow-lg">
+        <Card className="group h-full overflow-hidden border-neutral-200/70 transition hover:-translate-y-1 hover:border-primary/20 hover:shadow-lg">
             <div className="relative h-44 w-full overflow-hidden">
                 <img
                     src={
@@ -163,7 +163,7 @@ function SupplierCard({ supplier }: { supplier: SupplierListItem }) {
                             className="size-12 rounded-xl border-2 border-white object-cover"
                         />
                     ) : (
-                        <div className="flex size-12 items-center justify-center rounded-xl bg-white/90 text-lg font-semibold text-orange-600">
+                        <div className="flex size-12 items-center justify-center rounded-xl bg-white/90 text-lg font-semibold text-primary">
                             {supplier.companyName.slice(0, 1)}
                         </div>
                     )}
@@ -186,7 +186,7 @@ function SupplierCard({ supplier }: { supplier: SupplierListItem }) {
                 )}
                 <div className="flex flex-wrap gap-2">
                     {supplier.categories.slice(0, 4).map((category) => (
-                        <Badge key={category} variant="outline" className="border-orange-200 text-orange-600">
+                        <Badge key={category} variant="outline" className="border-primary/20 text-primary">
                             {category}
                         </Badge>
                     ))}
@@ -194,20 +194,20 @@ function SupplierCard({ supplier }: { supplier: SupplierListItem }) {
                 <Separator className="bg-neutral-200" />
                 <div className="flex items-center justify-between text-xs text-neutral-500">
                     <span className="flex items-center gap-2">
-                        <Globe2 className="size-4 text-orange-500" />
+                        <Globe2 className="size-4 text-primary" />
                         {supplier.rating.toFixed(1)} rating
                     </span>
                     <span className="flex items-center gap-2">
-                        <Mail className="size-4 text-orange-500" />
+                        <Mail className="size-4 text-primary" />
                         {supplier.contactEmail}
                     </span>
                 </div>
             </CardContent>
             <CardFooter className="flex items-center justify-between gap-3 p-6 pt-0">
-                <Button variant="outline" className="border-orange-200 text-orange-600 hover:bg-orange-50" asChild>
+                <Button variant="outline" className="border-primary/20 text-primary hover:bg-primary/5" asChild>
                     <Link href={supplier.url ?? suppliers.show({ supplierProfile: supplier.slug }).url}>View profile</Link>
                 </Button>
-                <Button className="bg-orange-600 hover:bg-orange-600/90" asChild>
+                <Button className="bg-primary hover:bg-primary/90" asChild>
                     <Link href={supplier.websiteUrl ?? suppliers.show({ supplierProfile: supplier.slug }).url} target="_blank" rel="noreferrer">
                         Visit site
                     </Link>

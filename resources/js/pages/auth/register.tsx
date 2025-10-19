@@ -41,7 +41,10 @@ const ACCOUNT_TABS = [
 ];
 
 export default function Register() {
-    const [accountType, setAccountType] = useState<'buyer' | 'supplier'>('buyer');
+    // Get account type from URL query parameter
+    const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const typeFromUrl = urlParams?.get('type') as 'buyer' | 'supplier' | null;
+    const [accountType, setAccountType] = useState<'buyer' | 'supplier'>(typeFromUrl || 'buyer');
     const countries = useMemo(() => COUNTRIES.sort((a, b) => a.localeCompare(b)), []);
 
     return (
@@ -224,17 +227,10 @@ function SupplierFields({
                 <InputError message={errors.email} />
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                    <Label htmlFor="industry">Industry / sector</Label>
-                    <Input id="industry" type="text" name="industry" required placeholder="Precision machining, automotive" />
-                    <InputError message={errors.industry} />
-                </div>
-                <div className="grid gap-2">
-                    <Label htmlFor="products">Main products</Label>
-                    <Input id="products" type="text" name="products" required placeholder="CNC components, sheet metal fabrication" />
-                    <InputError message={errors.products} />
-                </div>
+            <div className="grid gap-2">
+                <Label htmlFor="industry">Field/Category</Label>
+                <Input id="industry" type="text" name="industry" required placeholder="Precision machining, automotive" />
+                <InputError message={errors.industry} />
             </div>
         </div>
     );

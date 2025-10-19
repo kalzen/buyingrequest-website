@@ -43,17 +43,17 @@ export default function SupplierShow() {
         <LandingLayout>
             <Head title={`${supplier.companyName} | Supplier profile`} />
 
-            <section className="relative w-full border-b border-orange-100 bg-orange-50/80 py-16">
+            <section className="relative w-full border-b border-primary/20 bg-primary/5 py-16">
                 <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 lg:flex-row lg:items-center">
                     <div className="flex flex-1 items-start gap-4">
                         {supplier.logoUrl ? (
                             <img
                                 src={supplier.logoUrl}
                                 alt={supplier.companyName}
-                                className="size-16 rounded-xl border border-orange-200 object-cover"
+                                className="size-16 rounded-xl border border-primary/20 object-cover"
                             />
                         ) : (
-                            <div className="flex size-16 items-center justify-center rounded-xl border border-orange-200 bg-white text-lg font-semibold text-orange-600">
+                            <div className="flex size-16 items-center justify-center rounded-xl border border-primary/20 bg-white text-lg font-semibold text-primary">
                                 {supplier.companyName.slice(0, 2)}
                             </div>
                         )}
@@ -74,7 +74,7 @@ export default function SupplierShow() {
                             <div className="flex flex-wrap gap-3 text-sm text-neutral-500">
                                 {supplier.location && (
                                     <span className="flex items-center gap-1">
-                                        <Globe2 className="size-4 text-orange-500" />
+                                        <Globe2 className="size-4 text-primary" />
                                         {supplier.location}
                                     </span>
                                 )}
@@ -85,12 +85,12 @@ export default function SupplierShow() {
                         </div>
                     </div>
                     <div className="flex flex-col gap-3">
-                        <Button className="bg-orange-600 hover:bg-orange-600/90" asChild>
+                        <Button className="bg-primary hover:bg-primary/90" asChild>
                             <a href={supplier.websiteUrl ?? route('register')} target="_blank" rel="noreferrer">
                                 Visit supplier
                             </a>
                         </Button>
-                        <Button variant="outline" className="border-orange-200 text-orange-600 hover:bg-orange-50" asChild>
+                        <Button variant="outline" className="border-primary/20 text-primary hover:bg-primary/5" asChild>
                             <Link href={route('register')}>Contact supplier</Link>
                         </Button>
                     </div>
@@ -161,15 +161,15 @@ export default function SupplierShow() {
                 </div>
 
                 <aside className="space-y-4">
-                    <Card className="border-orange-100 bg-orange-50/80">
+                    <Card className="border-primary/20 bg-primary/5">
                         <CardHeader>
-                            <CardTitle className="text-sm text-orange-700">Reach new buyers</CardTitle>
+                            <CardTitle className="text-sm text-primary">Reach new buyers</CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-3 text-sm text-orange-700">
+                        <CardContent className="space-y-3 text-sm text-primary">
                             <p>
                                 Upgrade to featured supplier status to appear on the homepage, respond instantly, and unlock insights.
                             </p>
-                            <Button className="w-full bg-orange-600 hover:bg-orange-600/90" asChild>
+                            <Button className="w-full bg-primary hover:bg-primary/90" asChild>
                                 <Link href={route('register')}>Boost visibility</Link>
                             </Button>
                         </CardContent>

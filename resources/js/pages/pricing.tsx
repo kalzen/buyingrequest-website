@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Check, X, Clock, Users, Globe, DollarSign, FileText, Shield, Headphones } from 'lucide-react';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+import { route } from 'ziggy-js';
 
 export default function Pricing() {
     const plans = [
@@ -207,19 +208,20 @@ export default function Pricing() {
                     <div className="mt-8 grid grid-cols-1 md:grid-cols-5 gap-4">
                         {plans.map((plan) => (
                             <div key={plan.name} className="text-center">
-                                <Button
-                                    href="#"
-                                    variant={plan.buttonVariant}
-                                    className={`w-full ${
-                                        plan.popular 
-                                            ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
-                                            : plan.buttonVariant === 'outline'
-                                            ? 'border-primary text-primary hover:bg-primary/10'
-                                            : 'bg-slate-900 text-white hover:bg-slate-800'
-                                    }`}
-                                >
-                                    {plan.buttonText}
-                                </Button>
+                                <Link href={route('register', { mergeQuery: { type: 'supplier', plan: plan.name.toLowerCase() } })}>
+                                    <Button
+                                        variant={plan.buttonVariant}
+                                        className={`w-full ${
+                                            plan.popular 
+                                                ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
+                                                : plan.buttonVariant === 'outline'
+                                                ? 'border-primary text-primary hover:bg-primary/10'
+                                                : 'bg-slate-900 text-white hover:bg-slate-800'
+                                        }`}
+                                    >
+                                        {plan.buttonText}
+                                    </Button>
+                                </Link>
                             </div>
                         ))}
                     </div>
@@ -358,19 +360,21 @@ export default function Pricing() {
                         Join thousands of businesses already using Export Go to expand their reach
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Button 
-                            href="#"
-                            className="bg-white text-primary hover:bg-white/90 px-8 py-3 text-lg"
-                        >
-                            Start Free Today
-                        </Button>
-                        <Button 
-                            href="#"
-                            variant="outline" 
-                            className="border-white text-white hover:bg-white/10 px-8 py-3 text-lg"
-                        >
-                            Contact Sales
-                        </Button>
+                        <Link href={route('register', { mergeQuery: { type: 'supplier', plan: 'free' } })}>
+                            <Button 
+                                className="bg-white text-primary hover:bg-white/90 px-8 py-3 text-lg"
+                            >
+                                Start Free Today
+                            </Button>
+                        </Link>
+                        <a href="mailto:sales@exportgo.net?subject=Enterprise Plan Inquiry">
+                            <Button 
+                                variant="outline" 
+                                className="border-white text-white hover:bg-white/10 px-8 py-3 text-lg"
+                            >
+                                Contact Sales
+                            </Button>
+                        </a>
                     </div>
                 </div>
             </section>

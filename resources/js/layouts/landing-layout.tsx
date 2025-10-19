@@ -10,13 +10,12 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Menu, ArrowRight, Linkedin, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 import { PropsWithChildren, useMemo } from 'react';
-import { home, login, register } from '@/routes';
+import { route } from 'ziggy-js';
 import type { SharedData, CmsPageLink } from '@/types';
 
 const NAV_LINKS = [
     { key: 'buyers', label: 'For Buyers' },
     { key: 'suppliers', label: 'For Suppliers' },
-    { key: 'insights', label: 'Industry Insights' },
     { key: 'about', label: 'About Us' },
     { key: 'support', label: 'Support' },
 ];
@@ -24,7 +23,7 @@ const NAV_LINKS = [
 export default function LandingLayout({ children }: PropsWithChildren) {
     const { props } = usePage<SharedData>();
     const cms = props.cms;
-    const homeUrl = home().url;
+    const homeUrl = route('home');
 
     const footerMarketplace = cms?.footerLinks.marketplace ?? [];
     const footerSuppliers = cms?.footerLinks.suppliers ?? [];
@@ -38,11 +37,11 @@ export default function LandingLayout({ children }: PropsWithChildren) {
                         ? `${homeUrl}#buyers`
                         : link.key === 'suppliers'
                         ? `${homeUrl}#suppliers`
-                        : link.key === 'insights'
-                        ? `${homeUrl}#insights`
+                        : link.key === 'about'
+                        ? route('about')
                         : link.key === 'support'
                         ? `${homeUrl}#support`
-                        : `${homeUrl}#about`,
+                        : `${homeUrl}`,
             })),
         [homeUrl],
     );
@@ -90,10 +89,10 @@ export default function LandingLayout({ children }: PropsWithChildren) {
 
                     <div className="hidden items-center gap-3 md:flex">
                         <Button variant="ghost" className="text-sm font-semibold text-primary" asChild>
-                            <Link href={login().url}>Log in</Link>
+                            <Link href={route('login')}>Log in</Link>
                         </Button>
                         <Button className="rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90" asChild>
-                            <Link href={register().url}>Register</Link>
+                            <Link href={route('register')}>Register</Link>
                         </Button>
                     </div>
 
@@ -116,10 +115,10 @@ export default function LandingLayout({ children }: PropsWithChildren) {
                                 <Separator />
                                 <div className="flex flex-col gap-2">
                                     <Button variant="outline" asChild>
-                                        <Link href={login().url}>Log in</Link>
+                                        <Link href={route('login')}>Log in</Link>
                                     </Button>
                                     <Button className="bg-primary text-primary-foreground hover:bg-primary/90" asChild>
-                                        <Link href={register().url}>Register</Link>
+                                        <Link href={route('register')}>Register</Link>
                                     </Button>
                                 </div>
                             </div>

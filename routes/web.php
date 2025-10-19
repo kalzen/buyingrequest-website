@@ -16,6 +16,10 @@ use App\Http\Controllers\Marketplace\CategoryController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Supplier\DashboardController as SupplierDashboardController;
 use App\Http\Controllers\Supplier\ProfileController as SupplierProfileController;
+use App\Http\Controllers\Supplier\RfqController as SupplierRfqController;
+use App\Http\Controllers\Supplier\ResponseController as SupplierResponseController;
+use App\Http\Controllers\Supplier\OrderController as SupplierOrderController;
+use App\Http\Controllers\Supplier\SubscriptionController as SupplierSubscriptionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -57,6 +61,9 @@ Route::middleware(['auth'])->group(function () {
         // Request routes
         Route::get('requests/create', [BuyerRequestController::class, 'create'])->name('requests.create');
         Route::post('requests', [BuyerRequestController::class, 'store'])->name('requests.store');
+        Route::get('requests/{buyerRequest}/edit', [BuyerRequestController::class, 'edit'])->name('requests.edit');
+        Route::put('requests/{buyerRequest}', [BuyerRequestController::class, 'update'])->name('requests.update');
+        Route::delete('requests/{buyerRequest}', [BuyerRequestController::class, 'destroy'])->name('requests.destroy');
         
         // Lists routes
         Route::get('active-requests', [BuyerListsController::class, 'activeRequests'])->name('active-requests');
@@ -69,6 +76,29 @@ Route::middleware(['auth'])->group(function () {
         Route::get('dashboard', [SupplierDashboardController::class, 'index'])->name('dashboard');
         Route::get('profile', [SupplierProfileController::class, 'edit'])->name('profile.edit');
         Route::put('profile', [SupplierProfileController::class, 'update'])->name('profile.update');
+        
+        // RFQ routes
+        Route::get('rfqs', [SupplierRfqController::class, 'index'])->name('rfqs');
+        Route::get('rfqs/{buyerRequest}', [SupplierRfqController::class, 'show'])->name('rfqs.show');
+        Route::post('rfqs/{buyerRequest}/respond', [SupplierRfqController::class, 'respond'])->name('responses.store');
+        
+        // Response routes
+        Route::get('responses', [SupplierResponseController::class, 'index'])->name('responses');
+        Route::get('responses/{response}', [SupplierResponseController::class, 'show'])->name('responses.show');
+        Route::get('responses/{response}/edit', [SupplierResponseController::class, 'edit'])->name('responses.edit');
+        Route::put('responses/{response}', [SupplierResponseController::class, 'update'])->name('responses.update');
+        Route::delete('responses/{response}', [SupplierResponseController::class, 'destroy'])->name('responses.destroy');
+        
+        // Order routes
+        Route::get('orders', [SupplierOrderController::class, 'index'])->name('orders');
+        Route::get('orders/{order}', [SupplierOrderController::class, 'show'])->name('orders.show');
+        
+        // Subscription routes
+        Route::get('subscription', [SupplierSubscriptionController::class, 'index'])->name('subscription');
+        Route::get('subscription/checkout', [SupplierSubscriptionController::class, 'checkout'])->name('subscription.checkout');
+        Route::post('subscription', [SupplierSubscriptionController::class, 'store'])->name('subscription.store');
+        Route::post('subscription/activate', [SupplierSubscriptionController::class, 'activate'])->name('subscription.activate');
+        Route::post('subscription/cancel', [SupplierSubscriptionController::class, 'cancel'])->name('subscription.cancel');
     });
 
     // Admin routes

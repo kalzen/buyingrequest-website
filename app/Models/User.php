@@ -101,6 +101,52 @@ class User extends Authenticatable
         return $this->hasMany(Order::class, 'supplier_id');
     }
 
+    /**
+     * @return HasMany<ProfileView>
+     */
+    public function profileViews(): HasMany
+    {
+        return $this->hasMany(ProfileView::class, 'supplier_id');
+    }
+
+    /**
+     * Get profile views count for a period
+     */
+    public function getProfileViewsCount(string $period = '30 days'): int
+    {
+        return $this->profileViews()
+            ->where('viewed_at', '>=', now()->sub($period))
+            ->count();
+    }
+
+    /**
+     * @return HasMany<Subscription>
+     */
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    /**
+     * Get active subscription
+     */
+    public function activeSubscription()
+    {
+        return $this->subscriptions()
+            ->where('status', 'active')
+            ->where('current_period_end', '>', now())
+            ->first();
+    }
+
+    /**
+     * Get current plan name
+     */
+    public function currentPlan(): string
+    {
+        $subscription = $this->activeSubscription();
+        return $subscription ? $subscription->plan : 'free';
+    }
+
     public function isSupplier(): bool
     {
         return $this->role === self::ROLE_SUPPLIER;

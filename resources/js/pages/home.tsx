@@ -1,5 +1,4 @@
 ﻿import { useEffect, useMemo, useState } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -13,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Link } from '@inertiajs/react';
 import LandingLayout from '@/layouts/landing-layout';
-import { route } from '@/lib/route';
+import { route } from 'ziggy-js';
 import {
     ArrowRight,
     Building,
@@ -46,8 +45,6 @@ interface HomePageProps {
 
 type PageProps = SharedData & HomePageProps;
 
-const AUDIENCE_KEY = 'industrial-hub-audience';
-
 export default function Home({
     featuredSuppliers,
     latestRequests,
@@ -56,7 +53,6 @@ export default function Home({
     stats,
 }: PageProps) {
     const [activeSlide, setActiveSlide] = useState(0);
-    const [audienceModalOpen, setAudienceModalOpen] = useState(true);
 
     useEffect(() => {
         if (heroSlides.length <= 1) return;
@@ -68,21 +64,6 @@ export default function Home({
 
     const activeHero = heroSlides[activeSlide] ?? heroSlides[0];
     const supplierLogos = featuredSuppliers.slice(0, 6);
-
-    const handleAudienceSelect = (audience: 'buyer' | 'supplier') => {
-        if (typeof window !== 'undefined') {
-            window.sessionStorage.setItem(AUDIENCE_KEY, audience);
-            setAudienceModalOpen(false);
-            
-            if (audience === 'buyer') {
-                // Chuyển đến trang đăng ký với type=buyer
-                window.location.href = route('register', { mergeQuery: { type: 'buyer' } });
-            } else {
-                // Chuyển đến trang đăng ký với type=supplier
-                window.location.href = route('register', { mergeQuery: { type: 'supplier' } });
-            }
-        }
-    };
 
     const statsCards = useMemo(
         () => [
@@ -237,7 +218,7 @@ export default function Home({
                                             <MapPin className="size-4" />
                                             {supplier.location ?? 'Global'}
                                         </span>
-                                        <Button asChild size="sm" variant="outline" className="h-8 rounded-full border-white/40 text-white hover:bg-white/15">
+                                        <Button asChild size="sm" variant="outline" className="h-8 rounded-full border-white/40 bg-white text-black hover:bg-white/90">
                                             <Link href={supplier.url}>
                                                 View profile
                                                 <ArrowRight className="ml-1 size-4" />
@@ -320,14 +301,13 @@ export default function Home({
                                 Provide any additional context, drawings, or compliance requirements. Buyers receive direct follow-up within 24 hours.
                             </p>
                             <Button asChild className="mt-6 rounded-full bg-primary px-6 text-primary-foreground hover:bg-primary/90">
-                                <Link href={route('requests.create')}>Open full RFQ form</Link>
+                                <Link href={route('buyer.requests.create')}>Open full RFQ form</Link>
                             </Button>
                         </Card>
                     </div>
                 </div>
             </section>
 
-            <AudienceChooser open={audienceModalOpen} onSelect={handleAudienceSelect} />
         </LandingLayout>
     );
 }
@@ -361,10 +341,14 @@ function HeroSection({
                 <div className="flex-1 space-y-8">
                     <Badge className="bg-white/20 text-white">Search the trusted supplier network</Badge>
                     <h1 className="text-4xl font-bold leading-tight md:text-5xl">
-                        {slide?.title ?? 'Source with confidence in minutes'}
+                        Latest Purchasing Needs
                     </h1>
                     <p className="max-w-xl text-base text-white/85">
-                        {slide?.description ?? 'Industrial Hub connects buyers with audited suppliers across manufacturing, logistics, and advanced technology sectors.'}
+                        Here, we only aggregate all buying demands. Please{' '}
+                        <Link href={route('login')} className="underline hover:text-white">
+                            Log in
+                        </Link>{' '}
+                        to receive purchasing requests relevant to your company.
                     </p>
 
                     <div className="rounded-2xl border border-white/20 bg-white/10 p-6 shadow-lg backdrop-blur">
@@ -383,7 +367,7 @@ function HeroSection({
                                 className="h-12 rounded-xl border-white/30 bg-white/10 text-white placeholder:text-white/60"
                                 placeholder="By category, company or brand"
                             />
-                            <Button className="h-12 rounded-xl bg-white px-6 text-primary hover:bg-white/90">
+                            <Button className="h-12 rounded-xl bg-white px-6 text-black hover:bg-white/90">
                                 <Search className="mr-2 size-4" />
                                 Search
                             </Button>
@@ -438,7 +422,7 @@ function HeroSection({
                                     12 shortlisted suppliers reviewing specs now
                                 </p>
                             </div>
-                            <Button asChild variant="outline" className="rounded-full border-white/40 text-white hover:bg-white/10">
+                            <Button asChild variant="outline" className="rounded-full border-white/40 bg-white text-black hover:bg-white/90">
                                 <Link href="#buying-requests">See all open projects</Link>
                             </Button>
                         </CardContent>
@@ -475,39 +459,5 @@ function ChecklistCard({ title, items }: { title: string; items: string[] }) {
                 ))}
             </CardContent>
         </Card>
-    );
-}
-
-function AudienceChooser({
-    open,
-    onSelect,
-}: {
-    open: boolean;
-    onSelect: (audience: 'buyer' | 'supplier') => void;
-}) {
-    return (
-        <Dialog open={open}>
-            <DialogContent className="max-w-md border border-[#d6e0f5] bg-white/95 p-8 text-center shadow-2xl">
-                <h2 className="text-2xl font-semibold text-foreground">Who are you sourcing for?</h2>
-                <p className="mt-2 text-sm text-slate-600">
-                    Choose the experience tailored to your goals. You can switch anytime from the navigation.
-                </p>
-                <div className="mt-8 flex flex-col gap-4">
-                    <Button
-                        variant="outline"
-                        className="h-14 rounded-xl border-primary/40 text-foreground shadow-sm transition hover:bg-primary/10"
-                        onClick={() => onSelect('buyer')}
-                    >
-                        <span className="text-lg font-semibold">For Buyer</span>
-                    </Button>
-                    <Button
-                        className="h-14 rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition hover:bg-primary/90"
-                        onClick={() => onSelect('supplier')}
-                    >
-                        <span className="text-lg font-semibold">For Supplier</span>
-                    </Button>
-                </div>
-            </DialogContent>
-        </Dialog>
     );
 }

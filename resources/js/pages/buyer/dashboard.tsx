@@ -1,9 +1,18 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { route } from 'ziggy-js';
-import { Head, Link } from '@inertiajs/react';
-import { ArrowRight, Search, Users, Building, CheckCircle2 } from 'lucide-react';
-import { usePage } from '@inertiajs/react';
+import DashboardLayout from "@/layouts/dashboard-layout"
+import { SectionCards } from "@/components/section-cards"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Link, usePage } from '@inertiajs/react'
+import { route } from 'ziggy-js'
+import { ArrowRight, FileText, TrendingUp, Calendar } from 'lucide-react'
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "@/components/ui/chart"
 
 interface User {
     name: string;
@@ -31,146 +40,166 @@ interface PageProps extends Record<string, unknown> {
     recentRequests: RecentRequest[];
 }
 
+const chartData = [
+    { month: "Jan", requests: 12, orders: 8 },
+    { month: "Feb", requests: 18, orders: 11 },
+    { month: "Mar", requests: 22, orders: 15 },
+    { month: "Apr", requests: 25, orders: 18 },
+    { month: "May", requests: 28, orders: 21 },
+    { month: "Jun", requests: 32, orders: 24 },
+]
+
+const chartConfig = {
+    requests: {
+        label: "Requests",
+        color: "hsl(var(--primary))",
+    },
+    orders: {
+        label: "Orders",
+        color: "hsl(var(--chart-2))",
+    },
+} satisfies ChartConfig
+
 export default function BuyerDashboard() {
     const { auth, stats, recentRequests } = usePage<PageProps>().props;
+
     return (
-        <>
-            <Head title="Buyer Dashboard" />
-            
-            <div className="min-h-screen bg-[#f5f7fb]">
-                {/* Header */}
-                <header className="border-b border-[#d6e0f5] bg-white/90 backdrop-blur">
-                    <div className="mx-auto flex h-18 w-full max-w-7xl items-center justify-between gap-6 px-4 py-4">
-                        <Link href={route('home')} className="flex items-center gap-3 text-primary">
-                            <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-primary-foreground">
-                                EG
-                            </span>
-                            <div className="leading-tight">
-                                <p className="text-lg font-semibold text-foreground">EXPORT GO</p>
-                                <p className="text-xs font-medium uppercase tracking-[0.3em] text-primary/70">
-                                    Connect. Source. Grow.
-                                </p>
-                            </div>
-                        </Link>
-
-                        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-                            <Link 
-                                href={route('buyer.profile.edit')} 
-                                className="group inline-flex items-center gap-1 rounded-full px-3 py-2 text-slate-600 transition hover:bg-primary/10 hover:text-primary"
-                            >
-                                My Account
-                                <ArrowRight className="size-3 translate-x-0 opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100" />
-                            </Link>
-                            <Link 
-                                href={route('buyer.dashboard')} 
-                                className="group inline-flex items-center gap-1 rounded-full px-3 py-2 text-slate-600 transition hover:bg-primary/10 hover:text-primary"
-                            >
-                                My Sourcing Dashboard
-                                <ArrowRight className="size-3 translate-x-0 opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100" />
-                            </Link>
-                        </nav>
-
-                        <div className="text-sm text-slate-600 font-medium">
-                            Hi, {auth.user.name}
-                        </div>
-                    </div>
-                </header>
-
-                {/* Main Content */}
-                <main className="bg-gradient-to-b from-white via-[#f0f4ff] to-[#f5f7fb]">
-                    <div className="mx-auto w-full max-w-7xl px-4 py-12">
-                        {/* Hero Section */}
-                        <div className="text-center mb-12">
-                            <h1 className="text-4xl font-bold text-foreground mb-4">
-                                My Sourcing Dashboard
-                            </h1>
-                            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                                Manage your sourcing activities, track requests, and connect with verified suppliers worldwide.
+        <DashboardLayout role="buyer" title="Dashboard" pageTitle="Buyer Dashboard">
+                        {/* Welcome Section */}
+                        <div className="px-2">
+                            <h1 className="text-3xl font-bold tracking-tight">Welcome back, {auth.user.name}!</h1>
+                            <p className="text-muted-foreground">
+                                Here's what's happening with your sourcing activities today.
                             </p>
                         </div>
 
-                        {/* Main Action Card */}
-                        <div className="max-w-2xl mx-auto mb-12">
-                            <Card className="border-2 border-primary/20 shadow-xl">
-                                <CardContent className="p-8 text-center">
-                                    <div className="mb-6">
-                                        <Search className="size-16 text-primary mx-auto mb-4" />
-                                        <h2 className="text-2xl font-bold text-foreground mb-2">
-                                            Post a Request for Quote (RFQ)
-                                        </h2>
-                                        <p className="text-slate-600">
-                                            Get quotes from verified suppliers for your sourcing needs
-                                        </p>
-                                    </div>
-                                    <Link href={route('buyer.requests.create')}>
-                                        <Button 
-                                            size="lg"
-                                            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
+                        {/* Stats Cards */}
+                        <SectionCards role="buyer" />
+
+                        {/* Main Content */}
+                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 px-4 lg:px-6">
+                            {/* Chart */}
+                            <Card className="col-span-4">
+                                <CardHeader>
+                                    <CardTitle>Activity Overview</CardTitle>
+                                    <CardDescription>
+                                        Your requests and completed orders over the last 6 months
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                                        <AreaChart
+                                            data={chartData}
+                                            margin={{
+                                                left: 12,
+                                                right: 12,
+                                            }}
                                         >
-                                            Create New RFQ
-                                            <ArrowRight className="size-4 ml-2" />
+                                            <CartesianGrid vertical={false} />
+                                            <XAxis
+                                                dataKey="month"
+                                                tickLine={false}
+                                                axisLine={false}
+                                                tickMargin={8}
+                                            />
+                                            <YAxis
+                                                tickLine={false}
+                                                axisLine={false}
+                                                tickMargin={8}
+                                            />
+                                            <ChartTooltip
+                                                cursor={false}
+                                                content={<ChartTooltipContent />}
+                                            />
+                                            <Area
+                                                dataKey="requests"
+                                                type="monotone"
+                                                fill="var(--color-requests)"
+                                                fillOpacity={0.4}
+                                                stroke="var(--color-requests)"
+                                            />
+                                            <Area
+                                                dataKey="orders"
+                                                type="monotone"
+                                                fill="var(--color-orders)"
+                                                fillOpacity={0.4}
+                                                stroke="var(--color-orders)"
+                                            />
+                                        </AreaChart>
+                                    </ChartContainer>
+                                </CardContent>
+                            </Card>
+
+                            {/* Quick Actions */}
+                            <Card className="col-span-3">
+                                <CardHeader>
+                                    <CardTitle>Quick Actions</CardTitle>
+                                    <CardDescription>
+                                        Frequently used features
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-3">
+                                    <Link href={route('buyer.requests.create')}>
+                                        <Button className="w-full justify-start" size="lg">
+                                            <FileText className="mr-2 h-5 w-5" />
+                                            Post New RFQ
+                                            <ArrowRight className="ml-auto h-4 w-4" />
+                                        </Button>
+                                    </Link>
+                                    <Link href={route('suppliers.index')}>
+                                        <Button variant="outline" className="w-full justify-start" size="lg">
+                                            <TrendingUp className="mr-2 h-5 w-5" />
+                                            Browse Suppliers
+                                            <ArrowRight className="ml-auto h-4 w-4" />
+                                        </Button>
+                                    </Link>
+                                    <Link href={route('buyer.active-requests')}>
+                                        <Button variant="outline" className="w-full justify-start" size="lg">
+                                            <Calendar className="mr-2 h-5 w-5" />
+                                            View Active Requests
+                                            <ArrowRight className="ml-auto h-4 w-4" />
                                         </Button>
                                     </Link>
                                 </CardContent>
                             </Card>
                         </div>
 
-                        {/* Stats Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                            <Link href={route('buyer.active-requests')}>
-                                <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer">
-                                    <CardContent className="p-6">
-                                        <Users className="size-8 text-primary mx-auto mb-3" />
-                                        <div className="text-2xl font-bold text-foreground mb-1">{stats.activeRequests}</div>
-                                        <div className="text-sm text-slate-600">Active Requests</div>
-                                    </CardContent>
-                                </Card>
-                            </Link>
-                            <Link href={route('buyer.supplier-contacts')}>
-                                <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer">
-                                    <CardContent className="p-6">
-                                        <Building className="size-8 text-primary mx-auto mb-3" />
-                                        <div className="text-2xl font-bold text-foreground mb-1">{stats.supplierContacts}</div>
-                                        <div className="text-sm text-slate-600">Suppliers Contacted</div>
-                                    </CardContent>
-                                </Card>
-                            </Link>
-                            <Link href={route('buyer.completed-orders')}>
-                                <Card className="text-center hover:shadow-lg transition-shadow cursor-pointer">
-                                    <CardContent className="p-6">
-                                        <CheckCircle2 className="size-8 text-primary mx-auto mb-3" />
-                                        <div className="text-2xl font-bold text-foreground mb-1">{stats.completedOrders}</div>
-                                        <div className="text-sm text-slate-600">Completed Orders</div>
-                                    </CardContent>
-                                </Card>
-                            </Link>
-                        </div>
-
-                        {/* Recent Requests */}
-                        {recentRequests.length > 0 && (
-                            <div className="max-w-4xl mx-auto mb-12">
-                                <h3 className="text-xl font-semibold text-foreground mb-6 text-center">
-                                    Recent Requests
-                                </h3>
+                        {/* Recent Requests Table */}
+                        {recentRequests && recentRequests.length > 0 && (
+                            <div className="px-4 lg:px-6">
                                 <Card>
-                                    <CardContent className="p-6">
+                                    <CardHeader>
+                                        <CardTitle>Recent Requests</CardTitle>
+                                        <CardDescription>
+                                            Your latest RFQ submissions
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
                                         <div className="space-y-4">
                                             {recentRequests.map((request) => (
-                                                <div key={request.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                                                    <div>
-                                                        <h4 className="font-semibold text-foreground">{request.title}</h4>
-                                                        <p className="text-sm text-slate-600">Created: {request.created_at}</p>
+                                                <div
+                                                    key={request.id}
+                                                    className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
+                                                >
+                                                    <div className="space-y-1">
+                                                        <p className="font-medium leading-none">
+                                                            {request.title}
+                                                        </p>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            Created: {new Date(request.created_at).toLocaleDateString()}
+                                                        </p>
                                                     </div>
-                                                    <div className="flex items-center gap-3">
-                                                        <span className={`px-2 py-1 text-xs rounded-full ${
-                                                            request.status === 'open' 
-                                                                ? 'bg-green-100 text-green-800' 
-                                                                : 'bg-gray-100 text-gray-800'
-                                                        }`}>
+                                                    <div className="flex items-center gap-2">
+                                                        <Badge
+                                                            variant={request.status === 'open' ? 'default' : 'secondary'}
+                                                        >
                                                             {request.status}
-                                                        </span>
+                                                        </Badge>
                                                         <Link href={route('requests.show', request.id)}>
-                                                            <Button size="sm" variant="outline">View</Button>
+                                                            <Button variant="ghost" size="sm">
+                                                                View
+                                                                <ArrowRight className="ml-2 h-4 w-4" />
+                                                            </Button>
                                                         </Link>
                                                     </div>
                                                 </div>
@@ -181,73 +210,24 @@ export default function BuyerDashboard() {
                             </div>
                         )}
 
-                        {/* Quick Actions */}
-                        <div className="max-w-4xl mx-auto">
-                            <h3 className="text-xl font-semibold text-foreground mb-6 text-center">
-                                Quick Actions
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <Link href={route('buyer.requests.create')}>
-                                    <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                                        <CardContent className="p-6">
-                                            <div className="flex items-center gap-4">
-                                                <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                                                    <Search className="size-6" />
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-semibold text-foreground">Browse Suppliers</h4>
-                                                    <p className="text-sm text-slate-600">Find verified suppliers</p>
-                                                </div>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </Link>
-                                <Link href={route('buyer.profile.edit')}>
-                                    <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                                        <CardContent className="p-6">
-                                            <div className="flex items-center gap-4">
-                                                <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                                                    <Users className="size-6" />
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-semibold text-foreground">Update Profile</h4>
-                                                    <p className="text-sm text-slate-600">Manage your account</p>
-                                                </div>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </Link>
-                            </div>
+                        {/* Bottom CTA */}
+                        <div className="px-4 lg:px-6">
+                            <Card className="bg-primary text-primary-foreground">
+                                <CardContent className="flex flex-col md:flex-row items-center justify-between gap-4 p-6">
+                                    <div>
+                                        <h3 className="text-lg font-semibold mb-1">Need help with sourcing?</h3>
+                                        <p className="text-sm text-primary-foreground/80">
+                                            Our team is here to assist you with finding the right suppliers.
+                                        </p>
+                                    </div>
+                                    <a href="mailto:support@exportgo.net?subject=Sourcing Assistance Request">
+                                        <Button variant="secondary" size="lg">
+                                            Contact Support
+                                        </Button>
+                                    </a>
+                                </CardContent>
+                            </Card>
                         </div>
-                    </div>
-                </main>
-
-                {/* Footer */}
-                <footer className="border-t border-[#d6e0f5] bg-white">
-                    <div className="mx-auto w-full max-w-7xl px-4 py-8">
-                        <div className="flex items-center justify-center space-x-8">
-                            <Link 
-                                href={route('about')} 
-                                className="text-sm font-medium text-slate-600 transition hover:text-primary"
-                            >
-                                About Us
-                            </Link>
-                            <Link 
-                                href={route('pricing')} 
-                                className="text-sm font-medium text-slate-600 transition hover:text-primary"
-                            >
-                                Pricing
-                            </Link>
-                            <Link 
-                                href={route('home')} 
-                                className="text-sm font-medium text-slate-600 transition hover:text-primary"
-                            >
-                                Contact
-                            </Link>
-                        </div>
-                    </div>
-                </footer>
-            </div>
-        </>
-    );
+        </DashboardLayout>
+    )
 }

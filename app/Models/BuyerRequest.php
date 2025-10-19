@@ -73,6 +73,15 @@ class BuyerRequest extends Model
     }
 
     /**
+     * Alias for buyer relationship
+     * @return BelongsTo<User, BuyerRequest>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
      * @return BelongsTo<Category, BuyerRequest>
      */
     public function category(): BelongsTo
