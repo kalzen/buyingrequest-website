@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Menu, ArrowRight, Linkedin, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
+import { Menu, ArrowRight, Linkedin, Twitter, Youtube, Mail, Phone, MapPin, Globe2 } from 'lucide-react';
 import { PropsWithChildren, useMemo } from 'react';
 import { route } from 'ziggy-js';
 import type { SharedData, CmsPageLink } from '@/types';
@@ -18,6 +18,13 @@ const NAV_LINKS = [
     { key: 'suppliers', label: 'For Suppliers' },
     { key: 'about', label: 'About Us' },
     { key: 'support', label: 'Support' },
+];
+
+const POLICY_LINKS = [
+    { slug: 'privacy-policy', label: 'Privacy Policy' },
+    { slug: 'terms-of-service', label: 'Terms of Service' },
+    { slug: 'payment-policy', label: 'Payment Policy' },
+    { slug: 'refund-policy', label: 'Refund Policy' },
 ];
 
 export default function LandingLayout({ children }: PropsWithChildren) {
@@ -132,8 +139,8 @@ export default function LandingLayout({ children }: PropsWithChildren) {
             </main>
 
             <footer id="support" className="border-t border-[#d6e0f5] bg-white">
-                <div className="mx-auto grid w-full max-w-7xl gap-12 px-4 py-12 lg:grid-cols-[1.5fr,1fr,1fr,1fr]">
-                    <div className="space-y-4">
+                <div className="mx-auto grid w/full max-w-7xl gap-12 px-4 py-12 md:grid-cols-2 lg:grid-cols-5">
+                    <div className="space-y-4 lg:col-span-2">
                         <div className="flex items-center gap-3 text-primary">
                             <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-primary-foreground">EG</span>
                             <div className="font-semibold text-foreground">EXPORT GO</div>
@@ -160,42 +167,84 @@ export default function LandingLayout({ children }: PropsWithChildren) {
                         </div>
                     </div>
 
-                    <div>
-                        <h4 className="text-sm font-semibold text-foreground">Marketplace</h4>
-                        {renderFooterLinks(footerMarketplace)}
-                    </div>
+                    <div className="grid gap-8 text-sm text-slate-600 sm:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
+                        <div>
+                            <h4 className="text-sm font-semibold text-foreground">Marketplace</h4>
+                            {renderFooterLinks(footerMarketplace)}
+                        </div>
 
-                    <div>
-                        <h4 className="text-sm font-semibold text-foreground">Suppliers</h4>
-                        {renderFooterLinks(footerSuppliers)}
-                    </div>
+                        <div>
+                            <h4 className="text-sm font-semibold text-foreground">Suppliers</h4>
+                            {renderFooterLinks(footerSuppliers)}
+                        </div>
 
-                    <div className="text-sm text-slate-600">
-                        <h4 className="text-sm font-semibold text-foreground">Contact</h4>
-                        <ul className="mt-4 space-y-3">
-                            <li className="flex items-start gap-2">
-                                <MapPin className="size-4 text-primary mt-1" />
-                                <div>
-                                    <p className="font-semibold text-foreground">Official U.S. Headquarters</p>
-                                    <p>Export Go</p>
-                                    <p>1550 Wewatta St</p>
-                                    <p>Denver, CO 80202</p>
-                                    <p>United States</p>
-                                </div>
-                            </li>
-                            <li className="flex items-center gap-2 mt-4">
-                                <Phone className="size-4 text-primary" />
-                                <a href="tel:+12023739263" className="transition hover:text-primary">
-                                    +1 (202) 373-9263
-                                </a>
-                            </li>
-                            <li className="flex items-center gap-2">
-                                <Mail className="size-4 text-primary" />
-                                <a href="https://exportgo.net" target="_blank" rel="noopener noreferrer" className="transition hover:text-primary">
-                                    Exportgo.net
-                                </a>
-                            </li>
-                        </ul>
+                        <div>
+                            <h4 className="text-sm font-semibold text-foreground">Policies</h4>
+                            <ul className="mt-4 space-y-2">
+                                {POLICY_LINKS.map((item) => (
+                                    <li key={item.slug}>
+                                        <Link href={route('pages.show', { page: item.slug })} className="transition hover:text-primary">
+                                            {item.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 className="text-sm font-semibold text-foreground">Company</h4>
+                            <ul className="mt-4 space-y-2">
+                                <li>
+                                    <Link href={route('about')} className="transition hover:text-primary">
+                                        About Export Go
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href={route('pricing')} className="transition hover:text-primary">
+                                        Pricing & plans
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/support" className="transition hover:text-primary">
+                                        Support Center
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div className="lg:col-span-2">
+                            <h4 className="text-sm font-semibold text-foreground">Contact</h4>
+                            <ul className="mt-4 space-y-3">
+                                <li className="flex items-start gap-2">
+                                    <MapPin className="mt-1 size-4 text-primary" />
+                                    <div>
+                                        <p className="font-semibold text-foreground">Official U.S. Headquarters</p>
+                                        <p>Export Go</p>
+                                        <p>1550 Wewatta St</p>
+                                        <p>Denver, CO 80202</p>
+                                        <p>United States</p>
+                                    </div>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                    <Phone className="size-4 text-primary" />
+                                    <a href="tel:+12023739263" className="transition hover:text-primary">
+                                        +1 (202) 373-9263
+                                    </a>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                    <Mail className="size-4 text-primary" />
+                                    <a href="mailto:hello@exportgo.net" className="transition hover:text-primary">
+                                        hello@exportgo.net
+                                    </a>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                    <Globe2 className="size-4 text-primary" />
+                                    <a href="https://exportgo.net" target="_blank" rel="noopener noreferrer" className="transition hover:text-primary">
+                                        exportgo.net
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div className="border-t border-[#d6e0f5] bg-[#eef2fb] py-4 text-center text-xs text-slate-500">
